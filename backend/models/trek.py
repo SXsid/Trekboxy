@@ -36,6 +36,7 @@ class Trek(db.Model):
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
 
+    # INFO: we don't ened FK here no ambityi itt will linnk with it
     bookings = db.relationship("Booking", backref="trek", lazy=True)
 
     def to_dict(self) -> dict:

@@ -7,7 +7,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASE_DIR, 'tma.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-change-in-prod")
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=12)
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
     CELERY_BROKER_URL = REDIS_URL

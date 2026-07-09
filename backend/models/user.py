@@ -12,12 +12,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    # INFO: it iss slated by default (so even if same passowrd no ssimilar hash)
     password_hash = db.Column(db.String(256), nullable=False)
     # INFO: valid values: 'admin', 'staff', 'trekker'
     role = db.Column(db.String(20), nullable=False, default="trekker")
     full_name = db.Column(db.String(150))
-    phone = db.Column(db.String(20))
+    phone = db.Column(db.String(20), nullable=False)
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_blacklisted = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

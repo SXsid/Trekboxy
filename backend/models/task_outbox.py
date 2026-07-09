@@ -11,7 +11,6 @@ class TaskOutbox(db.Model):
 
     idempotency_key = db.Column(db.String(200), unique=True, nullable=False)
 
-    # Valid: 'CSV_EXPORT', 'DAILY_REMINDER', 'MONTHLY_REPORT'
     task_type = db.Column(db.String(50), nullable=False)
 
     payload = db.Column(db.JSON, nullable=False, default=dict)
@@ -23,4 +22,4 @@ class TaskOutbox(db.Model):
     error_message = db.Column(db.Text, nullable=True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    processed_at = db.Column(db.DateTime, nullable=True)  # filled when DONE or FAILED
+    processed_at = db.Column(db.DateTime, nullable=True)

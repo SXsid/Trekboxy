@@ -60,6 +60,10 @@ def create_app():
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
     app.register_blueprint(staff_bp, url_prefix="/api/staff")
 
+    @app.route("/", methods=["GET"])
+    def home():
+        return "hello worldt"
+
     with app.app_context():
         from models import Booking, TaskOutbox, Trek, User  # noqa: F401
 

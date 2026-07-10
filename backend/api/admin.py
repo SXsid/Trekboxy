@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
-from utils.cache import TTL_ADMIN_STATS, cache_get, cache_set
-from utils.decorators import role_required
 
 from extensions import db
+from helper.cache import TTL_ADMIN_STATS, cache_get, cache_set
+from helper.decorators import role_required
 from models import Booking, Trek, User
 
 admin_bp = Blueprint("admin", __name__)
@@ -107,7 +107,6 @@ def update_user_status(user_id):
         user.is_active = bool(data["is_active"])
     if "is_blacklisted" in data:
         user.is_blacklisted = bool(data["is_blacklisted"])
-        # blacklisted users are also deactivated
         if data["is_blacklisted"]:
             user.is_active = False
 

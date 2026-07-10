@@ -1,42 +1,83 @@
-from datetime import datetime
+from datetime import UTC, date, datetime
+from typing import TYPE_CHECKING, List, Optional
+
+from sqlalchemy import (
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from extensions import db
+
+if TYPE_CHECKING:
+    from models.booking import Booking
+    from models.user import User
 
 
 class Trek(db.Model):
 
     __tablename__ = "treks"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(150), nullable=False)
-    location = db.Column(db.String(150), nullable=False)
-    description = db.Column(db.Text)
-    difficulty = db.Column(db.String(20), nullable=False, default="Easy")
-    duration_days = db.Column(db.Integer, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(150), nullable=False)
+    location: Mapped[str] = mapped_column(String(150), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    difficulty: Mapped[str] = mapped_column(String(20), nullable=False, default="Easy")
+    duration_days: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    total_slots = db.Column(db.Integer, nullable=False)
-    available_slots = db.Column(db.Integer, nullable=False)
+    total_slots: Mapped[int] = mapped_column(Integer, nullable=False)
+    available_slots: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    # INFO: in pedig state staff can be empty
-    assigned_staff_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-
-    status = db.Column(db.String(20), nullable=False, default="Pending")
-
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-
-    registration_deadline = db.Column(db.Date, nullable=False)
-
-    price = db.Column(db.Float, default=0.0)
-
-    created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    assigned_staff_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
     )
 
-    bookings = db.relationship("Booking", backref="trek", lazy=True)
+    # INFO: valid values: 'Pending', 'Open', 'Closed', 'Completed', 'Cancelled'
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="Pending")
+
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    registration_deadline: Mapped[date] = mapped_column(Date, nullable=False)
+
+    price: Mapped[float] = mapped_column(Float, default=0.0)
+
+    created_by: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
+
+    bookings: Mapped[List["Booking"]] = relationship(
+        "Booking",
+        back_populates="trek",
+        lazy="select",
+        cascade="all, delete-orphan",
+    )
+
+    creator: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[created_by],
+        back_populates="created_treks",
+    )
+
+    assigned_staff: Mapped[Optional["User"]] = relationship(
+        "User",
+        foreign_keys=[assigned_staff_id],
+        back_populates="assigned_treks",
+    )
 
     def to_dict(self) -> dict:
         return {

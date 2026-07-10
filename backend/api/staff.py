@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from utils.cache import cache_delete
-from utils.decorators import role_required
 
 from extensions import db
+from helper.cache import cache_delete
+from helper.decorators import role_required
 from models import Booking, Trek, User
 
 staff_bp = Blueprint("staff", __name__)

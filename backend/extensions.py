@@ -1,16 +1,22 @@
-import redis
+import redis as redis_lib
 from celery import Celery
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
 
-db = SQLAlchemy()
+
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 
 jwt = JWTManager()
 
 mail = Mail()
 
-redis_client = None
+redis_client: redis_lib.Redis | None = None
 
 
 def make_celery(app):

@@ -13,7 +13,7 @@ def cache_get(key: str):
         if data:
             return json.loads(data)
     except Exception:
-        pass  # INFO: jussst tereatd as cache miss
+        pass
     return None
 
 

@@ -57,7 +57,7 @@ def send_daily_reminders(self, target_date_str: Optional[str] = None):
             bookings = Booking.query.filter_by(trek_id=trek.id, status="Booked").all()
 
             for booking in bookings:
-                user = User.query.get(booking.user_id)
+                user =booking.trekker
                 if not user or not user.email:
                     continue
 

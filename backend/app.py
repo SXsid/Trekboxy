@@ -1,4 +1,5 @@
 import redis as redis_lib
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 
@@ -10,6 +11,7 @@ celery = None
 
 def create_app():
     global celery
+    load_dotenv("../.env")
 
     app = Flask(__name__)
     app.config.from_object(Config)

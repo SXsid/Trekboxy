@@ -91,8 +91,6 @@ def get_participants(trek_id):
     participants = []
     for b in bookings:
         p = b.to_dict()
-        # fetch usign relation
-        # TODO: where backref realtionship have been used
         p["user"] = b.trekker.to_dict() if b.trekker else None
         participants.append(p)
 

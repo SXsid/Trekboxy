@@ -2,7 +2,7 @@ from datetime import date
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from sqlalchemy.exc import IntegrityError
 
 from extensions import db
@@ -42,14 +42,18 @@ def create_booking():
     if trek.available_slots <= 0:
         return jsonify({"error": "No slots available — trek is full"}), 400
 
-    existing = Booking.query.filter_by(user_id=user_id, trek_id=trek_id).first()
+    existing = Booking.query.filter_by(
+        user_id=user_id, trek_id=trek_id, status="Booked"
+    ).first()
     if existing:
         return jsonify({"error": "You have already booked this trek"}), 409
 
     booking = Booking(
         user_id=user_id,
         trek_id=trek_id,
-        status="Booked",  # immediately Booked — no approval step
+        status="Booked",
+        # TODO: deleted that
+        payment_status="Paid",
     )
     trek.available_slots -= 1
 
@@ -58,9 +62,10 @@ def create_booking():
     try:
         db.session.commit()
         # unique constriant voilaton
-    except IntegrityError:
+    except IntegrityError as e:
+        print(e)
         db.session.rollback()
-        return jsonify({"error": "Booking already exists (race condition caught)"}), 409
+        return jsonify({"error": "Booking already exists"}), 409
 
     cache_delete("treks:all", f"treks:{trek_id}")
 
@@ -92,15 +97,16 @@ def get_my_bookings():
 
 @bookings_bp.route("/<int:booking_id>/cancel", methods=["PUT"])
 @jwt_required()
-@role_required(["admin", "trekker"])
+@role_required("admin", "trekker")
 def cancel_booking(booking_id):
     user_id = int(get_jwt_identity())
+    role = get_jwt().get("role")
 
     booking = Booking.query.get(booking_id)
     if not booking:
         return jsonify({"error": "Booking not found"}), 404
 
-    if booking.user_id != user_id:
+    if role == "trekker" and booking.user_id != user_id:
         return jsonify({"error": "Forbidden — not your booking"}), 403
 
     if booking.status == "Cancelled":
@@ -112,7 +118,7 @@ def cancel_booking(booking_id):
             jsonify({"message": "Trek itself is either cancelled or unavailable "}),
             200,
         )
-    if trek.status != "open":
+    if trek.status != "Open":
         return jsonify({"error": "Cancellation window is closed"}), 403
 
     if trek:

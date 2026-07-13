@@ -13,7 +13,6 @@ def role_required(*roles):
             payload = get_jwt()
             user_role = payload.get("role")
 
-            # Check if user's role is in the allowed list
             if user_role not in roles:
                 return (
                     jsonify(

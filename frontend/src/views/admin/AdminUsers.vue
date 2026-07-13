@@ -152,3 +152,8 @@ async function createStaff() {
 
 onMounted(fetchUsers)
 </script>
+<style scoped>
+.nav-link{
+        color:#a04000;
+}
+</style>

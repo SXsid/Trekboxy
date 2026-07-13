@@ -1,7 +1,7 @@
 <template>
   <nav v-if="auth.isLoggedIn" class="navbar navbar-expand-lg navbar-himtrek">
     <div class="container">
-      <RouterLink class="navbar-brand d-flex align-items-left gap-5" to="/">
+      <RouterLink class="navbar-brand d-flex align-items-center gap-2 " to="/">
         <i class="bi bi-compass-fill" style="color: var(--orange); font-size:1.5rem"></i>
         HimTrek
       </RouterLink>
@@ -11,7 +11,7 @@
       </button>
 
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav me-auto gap-2">
+        <ul class="navbar-nav me-auto ms-4 gap-4">
 
           <template v-if="auth.role === 'admin'">
             <li class="nav-item"><RouterLink class="nav-link" to="/admin">Dashboard</RouterLink></li>

@@ -19,8 +19,12 @@ def cache_get(key: str):
 
 def cache_set(key: str, value, ttl: int):
     try:
-        extensions.redis_client.setex(name=key, time=ttl, value=json.dumps(value))
-    except Exception:
+        print(
+            "here",
+            extensions.redis_client.setex(name=key, time=ttl, value=json.dumps(value)),
+        )
+    except Exception as e:
+        print("faile", e)
         pass
 
 

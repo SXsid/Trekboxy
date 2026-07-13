@@ -28,7 +28,7 @@ def dashboard():
 
     cache_set("admin:stats", stats, TTL_ADMIN_STATS)
 
-    return jsonify({"stats": stats, "source": "db"}), 200
+    return jsonify({"stats": stats}), 200
 
 
 # expensive and can't chace excpett if we have the parma stored

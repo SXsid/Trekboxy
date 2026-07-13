@@ -19,6 +19,11 @@ const routes = [
   { path: "/login", component: Login },
   { path: "/register", component: Register },
   { path: "/profile", component: Profile, meta: { requiresAuth: true } },
+  {
+    path: "/admin",
+    component: AdminDashboard,
+    meta: { requiresAuth: true, role: "admin" },
+  },
 ];
 
 const router = createRouter({

@@ -1,10 +1,9 @@
 import redis as redis_lib
+from config import Config
 from dotenv import load_dotenv
+from extensions import db, jwt, mail, make_celery
 from flask import Flask
 from flask_cors import CORS
-
-from config import Config
-from extensions import db, jwt, mail, make_celery
 
 celery = None
 
@@ -16,7 +15,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:5713"}})
 
     db.init_app(app)
     jwt.init_app(app)

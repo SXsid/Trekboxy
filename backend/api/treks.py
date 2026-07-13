@@ -1,9 +1,8 @@
 from datetime import date
 
+from extensions import db
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
-
-from extensions import db
 from helper.cache import TTL_TREK_ONE, TTL_TREKS_ALL, cache_delete, cache_get, cache_set
 from helper.decorators import role_required
 from models import Booking, Trek
@@ -95,14 +94,14 @@ def create_trek():
         difficulty=data["difficulty"],
         duration_days=data["duration_days"],
         total_slots=data["total_slots"],
-        available_slots=data["total_slots"],  # starts full
+        available_slots=data["total_slots"],
         status="Pending",
         start_date=date.fromisoformat(data["start_date"]),
         end_date=date.fromisoformat(data["end_date"]),
         registration_deadline=(
             date.fromisoformat(data["registration_deadline"])
             if data.get("registration_deadline")
-            else None
+            else date.fromisoformat(data["start_date"])
         ),
         price=data.get("price", 0.0),
         created_by=user_id,
@@ -194,6 +193,7 @@ def assign_staff(trek_id):
         return jsonify({"error": "Invalid staff member"}), 400
 
     trek.assigned_staff_id = staff_id
+    trek.status = "Approved"
     db.session.commit()
 
     cache_delete("treks:all", f"treks:{trek_id}")

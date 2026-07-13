@@ -2,7 +2,6 @@
   <div class="container py-4">
     <h3 class="mb-4"><i class="bi bi-compass me-2"></i>Available Treks</h3>
 
-    <!-- Search + Filters -->
     <div class="row g-2 mb-4">
       <div class="col-sm-4">
         <input v-model="filters.location" class="form-control" placeholder="Search location..." @input="fetchTreks" />

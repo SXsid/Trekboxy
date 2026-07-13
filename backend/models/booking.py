@@ -1,10 +1,9 @@
 from datetime import UTC, datetime, timezone
 from typing import TYPE_CHECKING, Optional
 
+from extensions import db
 from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from extensions import db
 
 if TYPE_CHECKING:
     from models.trek import Trek
@@ -50,7 +49,6 @@ class Booking(db.Model):
         back_populates="bookings",
     )
 
-    # __table_args__ = (UniqueConstraint("user_id", "trek_id", name="uq_user_trek",),)
     __table_args__ = (
         Index(
             "uq_user_trek_active",

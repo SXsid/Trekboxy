@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "./store/auth";
 
-//INFO: lazy import
-const Landing = () => import("./views/Landing.vue");
 const Login = () => import("./views/Login.vue");
 const Register = () => import("./views/Register.vue");
 const AdminDashboard = () => import("./views/admin/AdminDashboard.vue");
@@ -20,6 +18,10 @@ const routes = [
   { path: "/register", component: Register },
   { path: "/profile", component: Profile, meta: { requiresAuth: true } },
   {
+    path: "/treks",
+    component: TrekList,
+  },
+  {
     path: "/admin",
     component: AdminDashboard,
     meta: { requiresAuth: true, role: "admin" },
@@ -33,6 +35,21 @@ const routes = [
     path: "/staff",
     component: StaffDashboard,
     meta: { requiresAuth: true, role: "staff" },
+  },
+  {
+    path: "/bookings",
+    component: MyBookings,
+    meta: { requiresAuth: true, role: "trekker" },
+  },
+  {
+    path: "/admin/treks",
+    component: AdminTreks,
+    meta: { requiresAuth: true, role: "admin" },
+  },
+  {
+    path: "/admin/bookings",
+    component: AdminBookings,
+    meta: { requiresAuth: true, role: "admin" },
   },
 ];
 

@@ -1,6 +1,7 @@
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, List, Optional
 
+from extensions import db
 from sqlalchemy import (
     Date,
     DateTime,
@@ -12,8 +13,6 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from extensions import db
 
 if TYPE_CHECKING:
     from models.booking import Booking
@@ -38,7 +37,7 @@ class Trek(db.Model):
         Integer, ForeignKey("users.id"), nullable=True
     )
 
-    # INFO: valid values: 'Pending', 'Open', 'Closed', 'Completed', 'Cancelled'
+    # INFO: valid values: 'Pending', 'approved','Open', 'Closed', 'Completed', 'Cancelled'
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="Pending")
 
     start_date: Mapped[date] = mapped_column(Date, nullable=False)

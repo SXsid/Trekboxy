@@ -31,7 +31,6 @@ def dashboard():
     return jsonify({"stats": stats}), 200
 
 
-# expensive and can't chace excpett if we have the parma stored
 @admin_bp.route("/users", methods=["GET"])
 @jwt_required()
 @role_required("admin")

@@ -24,6 +24,11 @@ const routes = [
     component: AdminDashboard,
     meta: { requiresAuth: true, role: "admin" },
   },
+  {
+    path: "/admin/users",
+    component: AdminUsers,
+    meta: { requiresAuth: true, role: "admin" },
+  },
 ];
 
 const router = createRouter({

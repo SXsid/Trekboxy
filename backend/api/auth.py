@@ -1,9 +1,8 @@
 from datetime import timedelta
 
+from extensions import db
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-
-from extensions import db
 from models import User
 
 auth_bp = Blueprint("auth", __name__)
@@ -99,9 +98,16 @@ def update_me():
         user.full_name = data["full_name"]
     if "phone" in data:
         user.phone = data["phone"]
-    if "password" in data and data["password"]:
-        user.set_password(data["password"])
+    if "new_password" in data and data["new_password"]:
+        if not data.get("current_password"):
+            return (
+                jsonify({"error": "Current password is required to change password"}),
+                400,
+            )
+        if not user.check_password(data["current_password"]):
+            return jsonify({"error": "Incorrect current password"}), 401
+        user.set_password(data["new_password"])
 
     db.session.commit()
 
-    return jsonify({"message": "Profile updated"}), 200
+    return jsonify({"message": "Profile updated", "user": user.to_dict()}), 200

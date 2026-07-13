@@ -11,7 +11,7 @@ const StaffDashboard = () => import("./views/staff/StaffDashboard.vue");
 const Participants = () => import("./views/staff/Participants.vue");
 const TrekList = () => import("./views/trekker/TrekList.vue");
 const MyBookings = () => import("./views/trekker/MyBookings.vue");
-const Profile = () => import("./views/trekker/Profile.vue");
+const Profile = () => import("./views/Profile.vue");
 
 const routes = [
   { path: "/login", component: Login },

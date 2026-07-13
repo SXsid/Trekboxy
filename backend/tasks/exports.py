@@ -2,10 +2,10 @@ import csv
 import io
 from datetime import date, datetime
 
-from flask_mail import Message
-
 from app import celery
 from extensions import db, mail
+from flask import current_app
+from flask_mail import Message
 
 
 @celery.task(
@@ -72,11 +72,11 @@ def export_bookings_csv(self, user_id: int, outbox_id: int):
         csv_content = output.getvalue()
 
         msg = Message(
-            subject="Your TMA Booking History — CSV Export",
+            subject="Your Booking History — CSV Export",
             recipients=[user.email],
             body=(
                 f"Hi {user.full_name or user.username},\n\n"
-                "Please find your booking history attached.\n\n— TMA Team"
+                "Please find your booking history attached.\n\n— HimTrek Team"
             ),
         )
         msg.attach(
@@ -84,6 +84,7 @@ def export_bookings_csv(self, user_id: int, outbox_id: int):
             content_type="text/csv",
             data=csv_content.encode("utf-8"),
         )
+
         mail.send(msg)
 
         outbox.status = "DONE"

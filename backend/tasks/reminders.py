@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from flask_mail import Message
+from flask import current_app
 
 from app import celery
 from extensions import db, mail
@@ -94,5 +95,5 @@ Get ready and stay safe on the trail!
 
 — TMA Team""".strip()
 
-    msg = Message(subject=subject, recipients=[user.email], body=body)
+    msg = Message(sender=current_app.config.get("MAIL_DEFAULT_SENDER"), subject=subject, recipients=[user.email], body=body)
     mail.send(msg)

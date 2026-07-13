@@ -8,8 +8,8 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
     REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/")
 
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
+    broker_url = os.getenv("REDIS_URL", "redis://localhost:6379/")
+    result_backend = os.getenv("REDIS_URL", "redis://localhost:6379/")
 
     MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
     MAIL_PORT = int(os.getenv("MAIL_PORT", 587))

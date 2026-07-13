@@ -1,3 +1,4 @@
+import config
 import redis as redis_lib
 from celery import Celery
 from flask_jwt_extended import JWTManager
@@ -22,8 +23,8 @@ redis_client: redis_lib.Redis | None = None
 def make_celery(app):
     celery = Celery(
         app.import_name,
-        broker=app.config["CELERY_BROKER_URL"],
-        backend=app.config["CELERY_RESULT_BACKEND"],
+        broker=config.Config.broker_url,
+        backend=config.Config.result_backend,
     )
     celery.conf.update(app.config)
 

@@ -1,6 +1,12 @@
+import os
+
+from dotenv import load_dotenv
+
+_ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
+load_dotenv(_ENV_PATH)
+
 import redis as redis_lib
 from config import Config
-from dotenv import load_dotenv
 from extensions import db, jwt, mail, make_celery
 from flask import Flask
 from flask_cors import CORS
@@ -10,7 +16,6 @@ celery = None
 
 def create_app():
     global celery
-    load_dotenv("../.env")
 
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -32,17 +37,14 @@ def create_app():
     from celery.schedules import crontab
 
     celery.conf.beat_schedule = {
-        # Outbox poller — runs every 30 seconds to dispatch PENDING tasks
         "process-outbox-every-30s": {
             "task": "tasks.process_outbox",
-            "schedule": 30.0,  # seconds
+            "schedule": 5.0,  # seconds
         },
-        # Daily reminder — every day at 8:00 AM
         "daily-trek-reminders": {
             "task": "tasks.send_daily_reminders",
             "schedule": crontab(hour="8", minute="0"),
         },
-        # Monthly report — 1st of every month at 9:00 AM
         "monthly-admin-report": {
             "task": "tasks.send_monthly_report",
             "schedule": crontab(hour="9", minute="0", day_of_month="1"),

@@ -2,6 +2,7 @@ from calendar import monthrange
 from datetime import date
 
 from flask_mail import Message
+from flask import current_app
 
 from app import celery
 from extensions import db, mail
@@ -102,6 +103,7 @@ def send_monthly_report(self, year=None, month=None):
         )
 
         msg = Message(
+            sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
             subject=f"TMA Monthly Report — {year}/{month:02d}",
             recipients=[admin.email],
             html=html_body,

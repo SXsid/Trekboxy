@@ -1,14 +1,12 @@
 from datetime import date
-from uuid import uuid4
-
-from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
-from sqlalchemy.exc import IntegrityError
 
 from extensions import db
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from helper.cache import cache_delete
 from helper.decorators import role_required
 from models import Booking, TaskOutbox, Trek
+from sqlalchemy.exc import IntegrityError
 
 bookings_bp = Blueprint("bookings", __name__)
 
@@ -140,18 +138,18 @@ def export_bookings_csv():
     user_id = int(get_jwt_identity())
     today = date.today().isoformat()
 
-    idempotency_key = f"csv_export:{user_id}:{uuid4()}"
+    idempotency_key = f"csv_export:{user_id}:{today}"
 
-    # existing = TaskOutbox.query.filter_by(idempotency_key=idempotency_key).first()
-    # if existing:
-    #     return (
-    #         jsonify(
-    #             {
-    #                 "message": "Export already queued. You already have or  will receive an email shortly.",
-    #             }
-    #         ),
-    #         200,
-    #     )
+    existing = TaskOutbox.query.filter(
+        TaskOutbox.idempotency_key == idempotency_key,
+        TaskOutbox.status.in_(["PENDING", "DISPATCHED", "PROCESSING"]),
+    ).first()
+    print(existing)
+    if existing:
+        return (
+            jsonify({"message": "Export already queued. Check your email shortly."}),
+            200,
+        )
 
     task = TaskOutbox(
         idempotency_key=idempotency_key,

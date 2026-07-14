@@ -38,7 +38,7 @@
               {{ auth.user?.username }}
             </span>
           </li>
-          <li v-if="auth.role === 'trekker'" class="nav-item">
+          <li class="nav-item">
             <RouterLink class="nav-link" to="/profile">
               <i class="bi bi-gear me-1"></i>Profile
             </RouterLink>

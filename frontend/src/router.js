@@ -37,6 +37,11 @@ const routes = [
     meta: { requiresAuth: true, role: "staff" },
   },
   {
+    path: "/staff/treks/:id/participants",
+    component: Participants,
+    meta: { requiresAuth: true, role: "staff" },
+  },
+  {
     path: "/bookings",
     component: MyBookings,
     meta: { requiresAuth: true, role: "trekker" },

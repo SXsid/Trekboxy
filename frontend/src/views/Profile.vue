@@ -48,8 +48,8 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { useAuthStore } from '../../store/auth'
-import api from '../../api'
+import { useAuthStore } from '../store/auth'
+import api from '../api'
 
 const auth = useAuthStore()
 
@@ -69,7 +69,6 @@ async function saveProfile() {
   saved.value  = false
   error.value  = ''
 
-  // Only send password if user typed something
   const payload = { full_name: form.full_name, phone: form.phone }
   if (form.new_password) {
     if (!form.current_password) {

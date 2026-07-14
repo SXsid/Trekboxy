@@ -1,11 +1,10 @@
 from datetime import date, datetime, timedelta
 from typing import Optional
 
-from flask_mail import Message
-from flask import current_app
-
 from app import celery
 from extensions import db, mail
+from flask import current_app
+from flask_mail import Message
 
 
 @celery.task(
@@ -58,7 +57,7 @@ def send_daily_reminders(self, target_date_str: Optional[str] = None):
             bookings = Booking.query.filter_by(trek_id=trek.id, status="Booked").all()
 
             for booking in bookings:
-                user =booking.trekker
+                user = booking.trekker
                 if not user or not user.email:
                     continue
 
@@ -93,7 +92,12 @@ Duration: {trek.duration_days} days
 
 Get ready and stay safe on the trail!
 
-— TMA Team""".strip()
+— HimTrek Team""".strip()
 
-    msg = Message(sender=current_app.config.get("MAIL_DEFAULT_SENDER"), subject=subject, recipients=[user.email], body=body)
+    msg = Message(
+        sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
+        subject=subject,
+        recipients=[user.email],
+        body=body,
+    )
     mail.send(msg)

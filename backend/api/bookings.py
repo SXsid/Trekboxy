@@ -144,7 +144,6 @@ def export_bookings_csv():
         TaskOutbox.idempotency_key == idempotency_key,
         TaskOutbox.status.in_(["PENDING", "DISPATCHED", "PROCESSING"]),
     ).first()
-    print(existing)
     if existing:
         return (
             jsonify({"message": "Export already queued. Check your email shortly."}),

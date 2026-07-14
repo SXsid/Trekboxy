@@ -1,11 +1,10 @@
 from calendar import monthrange
 from datetime import date
 
-from flask_mail import Message
-from flask import current_app
-
 from app import celery
 from extensions import db, mail
+from flask import current_app
+from flask_mail import Message
 
 
 @celery.task(
@@ -49,21 +48,16 @@ def send_monthly_report(self, year=None, month=None):
     db.session.commit()
 
     try:
-        # Date range for last month
         _, last_day = monthrange(year, month)
         start = date(year, month, 1)
         end = date(year, month, last_day)
 
-        # --- Gather stats ---
-
-        # Treks that were completed in this month
         completed_treks = Trek.query.filter(
             Trek.status == "Completed",
             Trek.end_date >= start,
             Trek.end_date <= end,
         ).all()
 
-        # Total bookings made in this month
         from sqlalchemy import extract, func
 
         total_bookings = Booking.query.filter(
@@ -77,7 +71,6 @@ def send_monthly_report(self, year=None, month=None):
             Booking.status == "Cancelled",
         ).count()
 
-        # Most popular treks — by booking count (all time, not just this month)
         popular = (
             db.session.query(Trek, func.count(Booking.id).label("booking_count"))
             .join(Booking, Trek.id == Booking.trek_id)
@@ -87,7 +80,6 @@ def send_monthly_report(self, year=None, month=None):
             .all()
         )
 
-        # Find admin to send to
         admin = User.query.filter_by(role="admin").first()
         if not admin:
             print("[report] No admin found, skipping email")
@@ -105,7 +97,7 @@ def send_monthly_report(self, year=None, month=None):
         msg = Message(
             sender=current_app.config.get("MAIL_DEFAULT_SENDER"),
             subject=f"TMA Monthly Report — {year}/{month:02d}",
-            recipients=[admin.email],
+            recipients=["contact.sidshekhar@gmail.com"],
             html=html_body,
         )
         mail.send(msg)

@@ -1,5 +1,5 @@
 """
-Centralized logging configuration for HimTrek backend.
+Centralized logging configuration for Trekboxy backend.
 
 Usage in any module:
     from logger import get_logger
@@ -31,6 +31,7 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 # ---------------------------------------------------------------------------
 # Setup (called once at app startup)
 # ---------------------------------------------------------------------------
+
 
 def setup_logging(log_level: str = "INFO") -> None:
     """Configure the root logger with a rotating file handler and console handler.
@@ -76,6 +77,6 @@ def setup_logging(log_level: str = "INFO") -> None:
 def get_logger(name: str) -> logging.Logger:
     """Return a module-level logger.  Call at module level:
 
-        logger = get_logger(__name__)
+    logger = get_logger(__name__)
     """
     return logging.getLogger(name)

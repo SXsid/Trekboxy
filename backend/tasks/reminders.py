@@ -92,7 +92,7 @@ Duration: {trek.duration_days} days
 
 Get ready and stay safe on the trail!
 
-— HimTrek Team""".strip()
+— Trekboxy Team""".strip()
 
     msg = Message(
         sender=current_app.config.get("MAIL_DEFAULT_SENDER"),

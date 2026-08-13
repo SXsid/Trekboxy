@@ -76,7 +76,7 @@ def export_bookings_csv(self, user_id: int, outbox_id: int):
             recipients=[user.email],
             body=(
                 f"Hi {user.full_name or user.username},\n\n"
-                "Please find your booking history attached.\n\n— HimTrek Team"
+                "Please find your booking history attached.\n\n— Trekboxy Team"
             ),
         )
         msg.attach(

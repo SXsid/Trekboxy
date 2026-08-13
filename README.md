@@ -1,6 +1,6 @@
-# HimTrek — Trekking Management Platform
+# Trekboxy — Trekking Management Platform
 
-HimTrek is a production-ready trekking management platform that coordinates **Admins**, **Trek Staff**, and **Trekkers**. It is built on a highly reliable asynchronous backbone featuring a Transactional Outbox Pattern to guarantee message/task delivery, coupled with robust caching and structured logging.
+Trekboxy is a production-ready trekking management platform that coordinates **Admins**, **Trek Staff**, and **Trekkers**. It is built on a highly reliable asynchronous backbone featuring a Transactional Outbox Pattern to guarantee message/task delivery, coupled with robust caching and structured logging.
 
 ---
 
@@ -72,8 +72,9 @@ flowchart TD
 
 In standard setups, an API endpoint commits a record to the database and immediately calls `task.delay()`. If the message broker (Redis) is down, or if the network hiccups right after the DB commit, the task is lost forever.
 
-HimTrek resolves this:
-1. **Atomic Write:** The Flask endpoint inserts the database records (e.g. Booking) and a `TaskOutbox` record (marked `PENDING`) in the *same* database transaction.
+Trekboxy resolves this:
+
+1. **Atomic Write:** The Flask endpoint inserts the database records (e.g. Booking) and a `TaskOutbox` record (marked `PENDING`) in the _same_ database transaction.
 2. **Scheduler Dispatch:** A periodic Celery Beat job (`process_outbox`) polls the `TaskOutbox` table every 5 seconds, locking pending tasks (`with_for_update(skip_locked=True)`) and routing them to Celery.
 3. **Execution & Audit:** Celery workers process the jobs and update the outbox task status to `DONE` or `FAILED`. If a task fails, Celery retries it with an exponential backoff.
 
@@ -103,7 +104,7 @@ MAIL_USERNAME=your-email@gmail.com
 MAIL_PASSWORD=your-app-password
 MAIL_DEFAULT_SENDER=your-email@gmail.com
 
-ADMIN_EMAIL=admin@himtrek.com
+ADMIN_EMAIL=admin@Trekboxy.com
 ADMIN_PASSWORD=admin123
 ADMIN_USERNAME=admin
 
@@ -117,11 +118,13 @@ LOG_LEVEL=INFO
 ### Option A: Local Dev (Using Makefile)
 
 First, set up your virtual environment and dependencies:
+
 ```bash
 make install
 ```
 
 Start the backend services in three separate terminals:
+
 ```bash
 make api       # Flask API Server (port 5000)
 make worker    # Celery Worker Process
@@ -129,6 +132,7 @@ make beat      # Celery Beat Scheduler
 ```
 
 Then run the Vue frontend:
+
 ```bash
 cd frontend
 npm install

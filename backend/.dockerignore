@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+*.db
+logs/
+celerybeat-schedule
+celerybeat.pid
+.env
+.git/
+.gitignore
+*.md

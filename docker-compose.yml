@@ -1,0 +1,62 @@
+services:
+  api:
+    build:
+      context: ./backend
+    command: >
+      gunicorn
+      --bind 0.0.0.0:5000
+      --workers 4
+      --worker-class sync
+      --timeout 120
+      --access-logfile -
+      --error-logfile -
+      "app:create_app()"
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/tma.db
+    volumes:
+      - db_data:/app/data
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./backend
+    command: >
+      celery -A celery_worker.celery worker
+      --loglevel=info
+      --concurrency=4
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/tma.db
+    volumes:
+      - db_data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  beat:
+    build:
+      context: ./backend
+    command: >
+      celery -A celery_worker.celery beat
+      --loglevel=info
+      --schedule /app/data/celerybeat-schedule
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/tma.db
+    volumes:
+      - db_data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  db_data:
